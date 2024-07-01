@@ -75,6 +75,7 @@ export default postsSlice.reducer
 export const selectAllPosts = state => state.posts.posts
 
 export const selectPostById = (state, postId) => state.posts.posts.find(post => post.id === postId)
+export const selectPostByUser = (state, userId) => state.posts.posts.find(post => post.user === userId)
 
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
   const response = await client.get('/fakeApi/posts')
