@@ -151,8 +151,9 @@ export const handlers = [
     const user = db.user.findFirst({ where: { id: { equals: data.user } } })
     data.user = user
     data.reactions = db.reaction.create()
-
+    console.log(data)
     const post = db.post.create(data)
+    
     await delay(ARTIFICIAL_DELAY_MS)
     return HttpResponse.json(serializePost(post))
   }),
