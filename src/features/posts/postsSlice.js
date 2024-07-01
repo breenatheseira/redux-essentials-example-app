@@ -54,7 +54,7 @@ const postsSlice = createSlice({
         state.status = 'loading'
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
-        state.status = 'idle'
+        state.status = 'succeeded'
         state.posts = state.posts.concat(action.payload)
       })
       .addCase(fetchPosts.rejected, (state, action) => {
