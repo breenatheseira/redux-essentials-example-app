@@ -1,4 +1,4 @@
-import { createSlice, nanoid, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, nanoid, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
 import { sub } from 'date-fns'
 import { client } from '../../api/client'
 
@@ -12,25 +12,6 @@ const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    postAdded: {
-      reducer(state, action){
-        state.posts.push(action.payload)
-      },
-      prepare(title, content, userId){
-        return {
-          payload: {
-            id: nanoid(),
-            date: new Date().toISOString(),
-            title,
-            content,
-            user: userId,
-            reactions: {
-              thumbsUp: 0, hooray: 0, heart: 0, rocket: 0, eyes: 0,
-            }
-          }
-        }
-      }
-    },
     postUpdated(state, action){
       const { id, title, content, userId } = action.payload
       const existingPost = state.posts.find(post => post.id === id)
@@ -68,14 +49,17 @@ const postsSlice = createSlice({
   }
 })
 
-export const { postAdded, postUpdated, reactionAdded } = postsSlice.actions
+export const { postUpdated, reactionAdded } = postsSlice.actions
 
 export default postsSlice.reducer
 
 export const selectAllPosts = state => state.posts.posts
 
 export const selectPostById = (state, postId) => state.posts.posts.find(post => post.id === postId)
-export const selectPostByUser = (state, userId) => state.posts.posts.find(post => post.user === userId)
+export const selectPostByUser = createSelector(
+  [selectAllPosts, (state, userId) => userId],
+  (posts, userId) => posts.filter(post => post.user === userId)
+)
 
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
   const response = await client.get('/fakeApi/posts')
